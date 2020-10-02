@@ -1,3 +1,13 @@
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+#include <WebSocketsClient.h> //  https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries 
+#include <ArduinoJson.h> // https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries
+
+ESP8266WiFiMulti WiFiMulti;
+WebSocketsClient webSocket;
+WiFiClient client;
+
 #define MyApiKey "2802a739-567f-4946-81df-e51fbdda34a4" // TODO: Change to your sinric API Key. Your API Key is displayed on sinric.com dashboard
 #define MySSID "anurag" // TODO: Change to your Wifi network SSID
 #define MyWifiPassword "1199227465" // TODO: Change to your Wifi network password
@@ -14,12 +24,13 @@ const int red=D4;
 const int green=D0;
 float intense=100;
 float intense_rainbow=100;
-int flag=0;
+int flag=1;
 int digit=0;
 float r_inc;
 float o_hall=100;
+int pixel_sts=0;
 
-float cr_,cg_,cb_;
+float cr_=0,cg_=0,cb_=0;
 
 
 void rainbow(float i,float j,float k);
@@ -33,9 +44,11 @@ void color_trans(int dummy,int F,float intense_);
 void turnOn(String deviceId) {
   if (deviceId == dev_id) // Device ID of first device
   {
-    if(flag==0)
-    flag=1;
+
+    if(digit==1)
+    {
     turnOff_rb(dev_rb);
+    }
     digit=0;
     for (float i=0;i<=intense;i++)
     {
@@ -50,7 +63,7 @@ void turnOn(String deviceId) {
 }
 
 void turnOff(String deviceId) {
-   if (deviceId == dev_id&&flag!=0) // Device ID of first device
+   if (deviceId == dev_id) // Device ID of first device
    {  
     for (float i=intense;i>=0;i--)
     {
@@ -71,6 +84,7 @@ void turnOn_rb(String deviceId) {
       colorsb(1,i);
       delay(8);
     }
+    digit=1;
     delay(8);
         Serial.print("rainbow on\n");
   } 
@@ -85,6 +99,7 @@ void turnOff_rb(String deviceId) {
         colors(cr_,cg_,cb_,i);
         delayMicroseconds(500);
       }
+      digit=0;
        Serial.print("rainbow off\n");
    }
   
@@ -114,22 +129,28 @@ void brightness_trans(float overhall)
     }
     
   }
+  //pixel_sts=1;
   
 }
 void color_trans(int dummy,int F,float intense_)//,float cr,float cg,float cb)
 {
   //reducing dummy color  //increasing flag color
-  
+  if(digit==0)
   for(float j=intense_;j>=0;j--)
   {
     colorsb(dummy,j);
     delay(3);
+  }
+  else if(digit==1)
+  {
+   turnOff_rb(dev_rb) ;
   }
   for (float i=0;i<=intense_;i++)
   {
     colorsb(F,i);
     delay(3);
   }
+  pixel_sts=1;
 }
 
 
@@ -231,32 +252,32 @@ void colorsb(int flag, float intense_)
             
             if(flag==17)//warm
           {
-            //turnOff(deviceId);
+            
             colors(255,147,41,intense_);
             
           }
           else if(flag==16)//soft
           {
-            //turnOff(deviceId);
+            
            colors(255,177,71,intense_);
             
           }
           else if(flag==15)//white
           {
-            //turnOff(deviceId);
+            
             colors(255,200,220,intense_);
             
           }
           else if(flag==14)//day
           {
-            //turnOff(deviceId);
+            
             
             colors(255,220,255,intense_);
             
           }
           else if(flag==13)//cool
           {
-            //turnOff(deviceId);
+           
             colors(255,255,255,intense_);
             
           }
@@ -305,19 +326,23 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 
       if(deviceId==dev_id)
       {  
-        
+        //if(digit=0);
         String action = json ["action"];               
         if(action == "setPowerState") 
         { // Switch or Light
             String value = json ["value"];
             if(value == "ON") 
-            {
+            {   
+                
                 turnOn(deviceId);
+                pixel_sts=1;
                 
             } 
-            else 
+            else if(value == "OFF")
             {
+
                 turnOff(deviceId);
+                pixel_sts=0;
             }
         }
         else if(action == "SetBrightness") 
@@ -333,6 +358,8 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
           String value = json ["value"];
           int tempval= value.toInt();
           int dummy;
+          
+          //turnOff_rb(dev_rb);
           if(tempval==7000)//cool 
           {
             dummy=flag;
@@ -373,7 +400,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
           float sat = value["saturation"];
           
           
-                 
+          //turnOff_rb(dev_rb);       
           if((hue == 0))//red
           {
             dummy=flag;
@@ -450,7 +477,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             Serial.println("[WSc] received test command from sinric.com");
         }
       }
-    else if(deviceId == dev_rb)
+      else if(deviceId == dev_rb)
      {
         
         //turnOff(dev_id);
@@ -463,13 +490,16 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
                if(value=="OFF")     
                   {
                     turnOff_rb(deviceId);
+                    //turnOff(dev_id);
                     digit=0;
                   }
                else if(value=="ON")
                   {
+                    if(pixel_sts==1)
                     turnOff(dev_id);
                     turnOn_rb(deviceId);
                     digit=1;
+                    
                   }
            }
          else if(action == "SetBrightness") 
@@ -609,7 +639,7 @@ void rainbow(float i,float j,float k)
         
         }
         else if(digit==0)
-        break;
+       break;
       }
     
     for(float x=0;x<=25500;x++)
@@ -661,7 +691,7 @@ void rainbow(float i,float j,float k)
           
         }
         else if(digit==0)
-        break;
+       break;
       }
      
   
