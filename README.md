@@ -1,1 +1,1 @@
-# pixel
+# homeautomated led lights named pixel
