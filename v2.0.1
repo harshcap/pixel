@@ -79,6 +79,7 @@ void turnOn_rb(String deviceId) {
       colorsb(1,i);
       delay(8);
     }
+    delay(8);
         Serial.print("rainbow on\n");
   } 
   
@@ -460,7 +461,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             Serial.println("[WSc] received test command from sinric.com");
         }
       }
-     if(deviceId == dev_rb)
+    else if(deviceId == dev_rb)
      {
         
         //turnOff(dev_id);
@@ -477,7 +478,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
                   }
                else //if(value=="ON")
                   {
-                    turnOff(dev_id);
+                   // turnOff(dev_id);
                     turnOn_rb(deviceId);
                     digit=1;
                   }
