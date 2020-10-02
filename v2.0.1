@@ -1,13 +1,3 @@
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-#include <WebSocketsClient.h> //  https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries 
-#include <ArduinoJson.h> // https://github.com/kakopappa/sinric/wiki/How-to-add-dependency-libraries
-
-ESP8266WiFiMulti WiFiMulti;
-WebSocketsClient webSocket;
-WiFiClient client;
-
 #define MyApiKey "2802a739-567f-4946-81df-e51fbdda34a4" // TODO: Change to your sinric API Key. Your API Key is displayed on sinric.com dashboard
 #define MySSID "anurag" // TODO: Change to your Wifi network SSID
 #define MyWifiPassword "1199227465" // TODO: Change to your Wifi network password
@@ -45,11 +35,13 @@ void turnOn(String deviceId) {
   {
     if(flag==0)
     flag=1;
-    turnOff_rb(dev_rb);digit=0;
+    turnOff_rb(dev_rb);
+    digit=0;
     for (float i=0;i<=intense;i++)
     {
-      colorsb(flag,i);
       delay(3);
+      colorsb(flag,i);
+      
     }
     Serial.print("pixel on\n");
   
@@ -189,11 +181,8 @@ void colorsb(int flag, float intense_)
 {
 
             
-            if(flag==0)
-            {
-              colors(255,255,255,intense_);
-            }
-            else if (flag==1)
+            
+            if (flag==1)
             {              
               colors(255,0,0,intense_);
             }
@@ -476,9 +465,9 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
                     turnOff_rb(deviceId);
                     digit=0;
                   }
-               else //if(value=="ON")
+               else if(value=="ON")
                   {
-                   // turnOff(dev_id);
+                    turnOff(dev_id);
                     turnOn_rb(deviceId);
                     digit=1;
                   }
@@ -677,6 +666,3 @@ void rainbow(float i,float j,float k)
      
   
  }
-
- 
- 
