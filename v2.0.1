@@ -563,6 +563,11 @@ void setup() {
   digitalWrite(green,HIGH);
   digitalWrite(blue,HIGH);
   
+
+
+
+
+
  
 }
 
@@ -572,7 +577,9 @@ void loop() {
    
     if(digit==1)
     {
+      
       rainbow(255,0,0);
+    
     }
   
   
@@ -591,7 +598,8 @@ void loop() {
 }   
 void rainbow(float i,float j,float k)
  {
-  for(float x=0;x<=25500;x++)
+  
+  for(float x=0;x<=2550;x++)
       { 
         
         //delay(1);
@@ -599,17 +607,19 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
           colors_rainbow(i,j,k,intense_rainbow);//i,0,k
-          k=k+0.01;
+          k=k+0.1;
           cr_=i,cg_=j,cb_=k;
+          delayMicroseconds(275);
           
         
         }
         else if(digit==0)
         break;
       } 
+      //delay(1);
       
     
-    for(float x=0;x<=25500;x++)
+    for(float x=0;x<=2550;x++)
       {
         
         //delay(1);
@@ -617,16 +627,18 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
           colors_rainbow(i,j,k,intense_rainbow);//;0,0,k
-          i=i-0.01;
+          i=i-0.1;
           cr_=i,cg_=j,cb_=k;
+          delayMicroseconds(275);
           
         }
         else if(digit==0)
         break;
       }
+     // delay(1);
       
     
-    for(float x=0;x<=25500;x++)
+    for(float x=0;x<=2550;x++)
       {
         
         //delay(1);
@@ -634,15 +646,17 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
           colors_rainbow(i,j,k,intense_rainbow);//0,j,k
-         j=j+0.01; 
+         j=j+0.1; 
          cr_=i,cg_=j,cb_=k;
+         delayMicroseconds(275);
         
         }
         else if(digit==0)
        break;
       }
+     // delay(1);
     
-    for(float x=0;x<=25500;x++)
+    for(float x=0;x<=2550 ;x++)
       {
         
         //delay(1);
@@ -650,16 +664,18 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
            colors_rainbow(i,j,k,intense_rainbow);//0,j,0
-          k=k-0.01;
+          k=k-0.1;
           cr_=i,cg_=j,cb_=k;
+          delayMicroseconds(275);
           
         }
+        
         else if(digit==0)
         break;
       }
-     
+    // delay(1);
     
-    for(float x=0;x<=25500;x++)
+    for(float x=0;x<=2550;x++)
       {
        
         //delay(1);
@@ -667,17 +683,17 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
           colors_rainbow(i,j,k,intense_rainbow);//i,j,0
-          i=i+0.01;
+          i=i+0.1;
           cr_=i,cg_=j,cb_=k;
-          
+          delayMicroseconds(275);
         }
         
         else if(digit==0)
         break;
       }
-     
+     //delay(1);
     
-    for(float x=0;x<=25500;x++)
+    for(float x=0;x<=2550;x++)
       {
         
         //delay(1);
@@ -685,14 +701,16 @@ void rainbow(float i,float j,float k)
         if(digit==1)
         {
           colors_rainbow(i,j,k,intense_rainbow);//i,0,0
-           j=j-0.01; 
+           j=j-0.1; 
            cr_=i,cg_=j,cb_=k;
+           delayMicroseconds(275);
            
           
         }
         else if(digit==0)
        break;
       }
-     
-  
- }
+   }
+
+ 
+ 
